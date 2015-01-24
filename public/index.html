@@ -14,6 +14,7 @@
 
     <script>
         var generalInstrumentSettings = {};
+        var timeout;
         var instruments = [];   //array of instruments 
         var score = [];         //array of instructions to execute at each semi-quaver
         var position = 0;       //current position of the performance in the score
@@ -21,10 +22,12 @@
         var semiquaverTime;
         var bpm = 100;
         var playing = [];       //current notes being played
-        var bgColor = ['F', 'F', 'F', 'F', 'F', 'F']; //bg color, controlled by the sounds
+        var bgColor = ['F', 'F', 'F', 'F', 'F', 'F', 'F']; //bg color, controlled by the sounds
         var bar = 1;
         var xLength;    //x length of vis tiles
         var yLength;    //y length of vis tiles
+        var currentCol = 0;
+        var currentRow = 0;
 
         function getData(block) {
             //get the performance data for a specified block
@@ -39,12 +42,12 @@
 
                 //name of this song
                 var detailsHTML = "<h3>Bitcoin Symphony No."+result.blockHeight+"</h3>"
-                            + "<p>The composition from block "+result.blockHash+"</br>"
+                            + "<p>A composition from block "+result.blockHash+"</br>"
                             + "In 4/4 time, at "+bpm+"bpm</p>";
                 $('.song-details').html(detailsHTML);
 
                 //initialise the visualisations
-                initViz(result.totalTransactions);
+                initViz(parseInt(result.totalTransactions));
                 //start the performance
                 performer();
               },
@@ -57,21 +60,50 @@
 
         function initViz(totalTxs){
             //initialise the vis - calculate the tile sizes
-            var xLength = Math.floor(1920/totalTxs);
-            var yLength = Math.floor(1080/totalTxs);
+            xLength = Math.floor(1920/22);
+            yLength = Math.floor(1080/22);
+            console.log(xLength, yLength);
+
+            currentCol = 0;
+            currentRow = 0;
+
+            //clear any previous vis
+            var canvas=document.getElementById("myCanvas");
+            var ctx=canvas.getContext("2d");
+            ctx.clearRect( 0 , 0 , canvas.width, canvas.height );
         }
 
-        function drawTile(col, row, color) {
+        function drawTile(color) {
             //draw a tile on grid
+            var xPoint = xLength*(currentCol);
+            var yPoint = yLength*(currentRow);
+            console.log(currentCol, currentRow, xPoint, yPoint, color);
+            var c=document.getElementById("myCanvas");
+            var ctx=c.getContext("2d");
+            ctx.fillStyle=color;
+            ctx.fillRect(xPoint, yPoint, xLength, yLength);
+        }
+
+        function stopPerformance(){
+            if ( position>0 ) {
+                //finis
+                instruments[0].stop('inst1');
+                instruments[1].stop('inst2');
+                instruments[2].stop('inst3');
+                instruments[3].stop('inst4');
+                instruments[3].stop('inst5');
+            }
+
+            clearTimeout(timeout);
         }
 
         function initPerformance(){
+            //stop any existing performance
+            stopPerformance();
+
             //reset the score position
             position = 0;
             playing = [];
-
-            //init the visualisation
-            //get how
 
             //calculate the speed
             beatTime = 60000/bpm;
@@ -173,6 +205,14 @@
                 return false;
             }
 
+            //set the visual colour
+            bgColor[5] = 5;
+
+            //console.log(playing);
+            var noteColor = bgColor.join('');
+            //$('.parallax-background').css('background', '#'+noteColor.substring(0, 6));
+            //console.log("set color to "+noteColor.substring(0, 6));
+
 
             //Instrument 1
             //do we need to play, or stop?
@@ -194,6 +234,14 @@
                 };
                 settings = $.extend({}, generalInstrumentSettings, settings);
                 instruments[0].play(settings);
+
+                //draw a tile for this note
+                currentCol ++;
+                if (currentCol>22) {
+                    currentCol = 0
+                    currentRow++;
+                }
+                drawTile('#'+noteColor.substring(0, 6));
             }
 
             //Instrument 2
@@ -216,6 +264,14 @@
                 };
                 settings = $.extend({}, generalInstrumentSettings, settings);
                 instruments[1].play(settings);
+
+                //draw a tile for this note
+                currentCol ++;
+                if (currentCol>22) {
+                    currentCol = 0
+                    currentRow++;
+                }
+                drawTile('#'+noteColor.substring(0, 6));
             }
 
             //Instrument 3
@@ -238,6 +294,14 @@
                 };
                 settings = $.extend({}, generalInstrumentSettings, settings);
                 instruments[2].play(settings);
+
+                //draw a tile for this note
+                currentCol ++;
+                if (currentCol>22) {
+                    currentCol = 0
+                    currentRow++;
+                }
+                drawTile('#'+noteColor.substring(0, 6));
             }
 
             //Instrument 4
@@ -260,6 +324,14 @@
                 };
                 settings = $.extend({}, generalInstrumentSettings, settings);
                 instruments[3].play(settings);
+
+                //draw a tile for this note
+                currentCol ++;
+                if (currentCol>22) {
+                    currentCol = 0
+                    currentRow++;
+                }
+                drawTile('#'+noteColor.substring(0, 6));
             }
 
             //Instrument 5
@@ -282,21 +354,21 @@
                 };
                 settings = $.extend({}, generalInstrumentSettings, settings);
                 instruments[4].play(settings);
+
+                //draw a tile for this note
+                currentCol ++;
+                if (currentCol>22) {
+                    currentCol = 0
+                    currentRow++;
+                }
+                drawTile('#'+noteColor.substring(0, 6));
             }
 
-            //set the visual colour
-            bgColor[5] = 5;
-
-            //console.log(playing);
-            var noteColor = bgColor.join('');
-            $('.parallax-background').css('background', '#'+noteColor.substring(0, 6));
-            //console.log("set color to "+noteColor.substring(0, 6));
 
             //write the score as we go along
             bar = Math.floor(position/16/4)+1;
             beat = (Math.floor(position/16) % 4)+1;
             $('.bar').html('Bar '+bar+'<sup><small>'+beat+'</small></sup>');
-
 
             $('.parallax-content .score').append(playing+' ');
 
@@ -304,108 +376,34 @@
             position ++;
             
             //set the next loop interval
-            setTimeout(performer, semiquaverTime);
+            timeout = setTimeout(performer, semiquaverTime);
         }
 
 
         $(document).ready(function(){
+            $('#stopSong').fadeOut(0);
 
-            //init the performer
-            initPerformance();
-
-            //get the data and start the performance
-            getData(340299);
-
-            var saw = new Wad({
-                source  : 'sawtooth',
-                volume  : 0.5,   // Peak volume can range from 0 to an arbitrarily high number, but you probably shouldn't set it higher than 1.
-                loop    : false, // If true, the audio will loop. This parameter only works for audio clips, and does nothing for oscillators. 
-                pitch   : 'A4',  // Set a default pitch on the constuctor if you don't want to set the pitch on play().
-                detune  : 0,     // Set a default detune on the constructor if you don't want to set detune on play(). Detune is measured in cents. 100 cents is equal to 1 semitone.
-                //panning : -5,    // Horizontal placement of the sound source. Sensible values are from 10 to -10.,
-                panning : [0, 1, 10],
-                env     : {      // This is the ADSR envelope.
-                    attack  : 0.0,  // Time in seconds from onset to peak volume.  Common values for oscillators may range from 0.05 to 0.3.
-                    decay   : 0.0,  // Time in seconds from peak volume to sustain volume.
-                    sustain : 1.0,  // Sustain volume level. This is a percent of the peak volume, so sensible values are between 0 and 1.
-                    hold    : 3.14, // Time in seconds to maintain the sustain volume level. If this is not set to a lower value, oscillators must be manually stopped by calling their stop() method.
-                    release : 0     // Time in seconds from the end of the hold period to zero volume, or from calling stop() to zero volume.
-                },
-                filter  : {
-                    type      : 'lowpass', // What type of filter is applied.
-                    frequency : 600,       // The frequency, in hertz, to which the filter is applied.
-                    q         : 1,         // Q-factor.  No one knows what this does. The default value is 1. Sensible values are from 0 to 10.
-                    env       : {          // Filter envelope.
-                        frequency : 800, // If this is set, filter frequency will slide from filter.frequency to filter.env.frequency when a note is triggered.
-                        attack    : 0.5  // Time in seconds for the filter frequency to slide from filter.frequency to filter.env.frequency
-                    }
-                },
-                /*
-                reverb  : {
-                    wet     : 1,                                            // Volume of the reverberations.
-                    impulse : 'http://www.myServer.com/path/to/impulse.wav' // A URL for an impulse response file, if you do not want to use the default impulse response.
-                },
-                */
-                delay   : {
-                    delayTime : .5,  // Time in seconds between each delayed playback.
-                    wet       : .25, // Relative volume change between the original sound and the first delayed playback.
-                    feedback  : .25, // Relative volume change between each delayed playback and the next. 
-                },
-                vibrato : { // A vibrating pitch effect.  Only works for oscillators.
-                    shape     : 'sine', // shape of the lfo waveform. Possible values are 'sine', 'sawtooth', 'square', and 'triangle'.
-                    magnitude : 3,      // how much the pitch changes. Sensible values are from 1 to 10.
-                    speed     : 4,      // How quickly the pitch changes, in cycles per second.  Sensible values are from 0.1 to 10.
-                    attack    : 0       // Time in seconds for the vibrato effect to reach peak magnitude.
-                },
-                tremolo : { // A vibrating volume effect.
-                    shape     : 'sine', // shape of the lfo waveform. Possible values are 'sine', 'sawtooth', 'square', and 'triangle'.
-                    magnitude : 3,      // how much the volume changes. Sensible values are from 1 to 10.
-                    speed     : 4,      // How quickly the volume changes, in cycles per second.  Sensible values are from 0.1 to 10.
-                    attack    : 0       // Time in seconds for the tremolo effect to reach peak magnitude.
+            $('.letsGo').click('click', function(){
+                //get the block height
+                var blockHeight = parseInt($('#blockHeight').val());
+                if(isNaN(blockHeight)) {
+                    blockHeight = 340339;
                 }
+                //init the performer
+                initPerformance();
+                //get the data and start the performance
+                getData(blockHeight);
+
+                $('#startSong').fadeOut(500, function(){
+                    $('#stopSong').fadeIn(800);
+                });
             });
-
-            saw = new Wad({source : 'sawtooth', volume : .9})
-            saw.setVolume(0.3);
-            //saw.play();
-            /*
-            saw.play({
-                volume  : 0.5,
-                wait    : 0,     // Time in seconds between calling play() and actually triggering the note.
-                loop    : false, // This overrides the value for loop on the constructor, if it was set. 
-                pitch   : 'A4',  // A4 is 440 hertz.
-                label   : 'A',   // A label that identifies this note.
-                env     : {hold : 9001},
-                panning : [1, -1, 10],
-                filter  : {frequency : 900},
-                delay   : {delayTime : .8}
+            $('.stopIt').click('click', function(){
+                stopPerformance();
+                $('#stopSong').fadeOut(500, function(){
+                    $('#startSong').fadeIn(800);
+                });
             });
-            */
-            //setTimeout(function(){saw.setPanning(-2);}, 1000)
-            
-/*
-            var sine     = new Wad({ source : 'sine' });
-            var square   = new Wad({ source : 'square' });
-            var triangle = new Wad({ source : 'triangle' });
-
-            //var tripleOscillator = new Wad.Poly();
-            var tripleOscillator = new Wad.Poly({
-                recConfig : { // The Recorder configuration object. The only required property is 'workerPath'.
-                    workerPath : '/lib/wad/src/Recorderjs/recorderWorker.js' // The path to the Recorder.js web worker script.
-                }
-            });
-
-            tripleOscillator.add(sine).add(square).add(triangle); // Many methods are chainable for convenience.
-
-            tripleOscillator.play({ pitch : 'Gb2'});
-            tripleOscillator.setVolume(.5);
-            //tripleOscillator.stop(); // play(), stop(), and various setter methods can be called on a PolyWad just as they would be called on a regular Wad.
-
-            setTimeout(function(){
-                tripleOscillator.remove(triangle); // It's really just a double-oscillator at this point.
-            }, 2000);
-*/
-
 
         });
     </script>
@@ -416,16 +414,33 @@
 
     <div class="parallax-background">
         <canvas id="myCanvas" width='1920' height='1080'></canvas>
-      <div class="intro-text">
-        <h1>Sound of the Block Chain</h1>
-        <h3 class="bar"></h3>
-        <p><i class="fi-arrow-down"></i></p>
+        <div class="intro-text">
+            <h1>Sound of the Block Chain</h1>
+            <h3 class="bar"></h3>
+            <p><i class="fi-arrow-down"></i></p>
+        </div>
+        <div id="startSong">
+            <div class="row">
+                <div class="large-6 small-centered columns">
+                    <div class="row collapse">
+                        <div class="small-10 columns">
+                            <input type="text" id="blockHeight" placeholder="block height...">
+                        </div>
+                        <div class="small-2 columns">
+                            <a href="#" class="button postfix success letsGo">Go</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="stopSong" class="text-center">
+            <a href="#" class="button alert small stopIt">Please Stop!!!</a>
+        </div>
     </div>
-</div>
 
-<div class="parallax-content">
-    <div class="song-details"></div>
-    <div class="score"></div>
-</div>              
+    <div class="parallax-content">
+        <div class="song-details"></div>
+        <div class="score"></div>
+    </div>              
 </body>
 </html>

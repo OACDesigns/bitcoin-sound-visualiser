@@ -14,6 +14,7 @@ body {
     background-size: cover;
     position: fixed;
     width: 100%;
+    height: 100%;
 }
 
 .intro-text {
@@ -21,20 +22,32 @@ body {
     color: #fff;
     text-align: center;
     margin-top: 15%;
+    height: 2.5em;
 }
 .parallax-content {
+    min-height:30em;
     max-width: 100%;
     position: relative;
     top: 500px;
     padding: 50px;
     font-size: 20px;
-    background-color: #fff;
-}              
+    background-color: #000;
+    opacity: 0.8;
+    color: #fff;
+}
+.parallax-content h3 {
+    color:#fff;
+}         
 
 .finis {
     font-family: 'Courgette', 'serif';
 }
 
+.score {
+    color:#999;
+}
+
 #myCanvas {
     position:absolute;
+    z-index: -1;
 }
