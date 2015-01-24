@@ -24,19 +24,31 @@ body {
     margin-top: 15%;
     height: 2.5em;
 }
+.intro-text small {
+    color:#333 !important;
+}
 .parallax-content {
     min-height:30em;
     max-width: 100%;
     position: relative;
-    top: 500px;
+    top: 1000px;
     padding: 50px;
     font-size: 20px;
     background-color: #000;
     opacity: 0.8;
     color: #fff;
+
+    -webkit-transition: top 0.8s ease-in-out;
+    transition: top 0.8s ease-in-out;
 }
 .parallax-content h3 {
     color:#fff;
+}
+.parallax-content.show{
+    top: 600px;
+
+    -webkit-transition: top 0.8s ease-in-out;
+    transition: top 0.8s ease-in-out;
 }         
 
 .finis {
@@ -44,7 +56,8 @@ body {
 }
 
 .score {
-    color:#999;
+    color:#666;
+    font-size: 0.75em;
 }
 
 #myCanvas {

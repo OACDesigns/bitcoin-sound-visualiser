@@ -77,7 +77,7 @@
             //draw a tile on grid
             var xPoint = xLength*(currentCol);
             var yPoint = yLength*(currentRow);
-            console.log(currentCol, currentRow, xPoint, yPoint, color);
+
             var c=document.getElementById("myCanvas");
             var ctx=c.getContext("2d");
             ctx.fillStyle=color;
@@ -86,7 +86,6 @@
 
         function stopPerformance(){
             if ( position>0 ) {
-                //finis
                 instruments[0].stop('inst1');
                 instruments[1].stop('inst2');
                 instruments[2].stop('inst3');
@@ -153,12 +152,16 @@
                     wet       : .25, // Relative volume change between the original sound and the first delayed playback.
                     feedback  : .25, // Relative volume change between each delayed playback and the next. 
                 },
+                */
+               /*
                 vibrato : { // A vibrating pitch effect.  Only works for oscillators.
                     shape     : 'sine', // shape of the lfo waveform. Possible values are 'sine', 'sawtooth', 'square', and 'triangle'.
                     magnitude : 3,      // how much the pitch changes. Sensible values are from 1 to 10.
                     speed     : 4,      // How quickly the pitch changes, in cycles per second.  Sensible values are from 0.1 to 10.
                     attack    : 0       // Time in seconds for the vibrato effect to reach peak magnitude.
                 },
+                */
+                /*
                 tremolo : { // A vibrating volume effect.
                     shape     : 'sine', // shape of the lfo waveform. Possible values are 'sine', 'sawtooth', 'square', and 'triangle'.
                     magnitude : 3,      // how much the volume changes. Sensible values are from 1 to 10.
@@ -194,14 +197,14 @@
         function performer() {
             //main loop responsible for performing sounds
             if ( !score[position] ) {
-                //finis
-                instruments[0].stop('inst1');
-                instruments[1].stop('inst2');
-                instruments[2].stop('inst3');
-                instruments[3].stop('inst4');
-                instruments[3].stop('inst5');
+                //finished
+                stopPerformance();
+                
+                $('#stopSong').fadeOut(500, function(){
+                    $('#startSong').fadeIn(800);
+                });
 
-                $('.bar').html('<span class="finis">Finis</span>');
+                $('.bar').html('<span class="fin">Finis</span>');
                 return false;
             }
 
@@ -235,13 +238,13 @@
                 settings = $.extend({}, generalInstrumentSettings, settings);
                 instruments[0].play(settings);
 
+                drawTile('#'+noteColor.substring(0, 6));
                 //draw a tile for this note
                 currentCol ++;
                 if (currentCol>22) {
                     currentCol = 0
                     currentRow++;
                 }
-                drawTile('#'+noteColor.substring(0, 6));
             }
 
             //Instrument 2
@@ -265,13 +268,13 @@
                 settings = $.extend({}, generalInstrumentSettings, settings);
                 instruments[1].play(settings);
 
+                drawTile('#'+noteColor.substring(0, 6));
                 //draw a tile for this note
                 currentCol ++;
                 if (currentCol>22) {
                     currentCol = 0
                     currentRow++;
                 }
-                drawTile('#'+noteColor.substring(0, 6));
             }
 
             //Instrument 3
@@ -295,13 +298,13 @@
                 settings = $.extend({}, generalInstrumentSettings, settings);
                 instruments[2].play(settings);
 
+                drawTile('#'+noteColor.substring(0, 6));
                 //draw a tile for this note
                 currentCol ++;
                 if (currentCol>22) {
                     currentCol = 0
                     currentRow++;
                 }
-                drawTile('#'+noteColor.substring(0, 6));
             }
 
             //Instrument 4
@@ -325,13 +328,13 @@
                 settings = $.extend({}, generalInstrumentSettings, settings);
                 instruments[3].play(settings);
 
+                drawTile('#'+noteColor.substring(0, 6));
                 //draw a tile for this note
                 currentCol ++;
                 if (currentCol>22) {
                     currentCol = 0
                     currentRow++;
                 }
-                drawTile('#'+noteColor.substring(0, 6));
             }
 
             //Instrument 5
@@ -355,13 +358,13 @@
                 settings = $.extend({}, generalInstrumentSettings, settings);
                 instruments[4].play(settings);
 
+                drawTile('#'+noteColor.substring(0, 6));
                 //draw a tile for this note
                 currentCol ++;
                 if (currentCol>22) {
                     currentCol = 0
                     currentRow++;
                 }
-                drawTile('#'+noteColor.substring(0, 6));
             }
 
 
@@ -397,12 +400,16 @@
                 $('#startSong').fadeOut(500, function(){
                     $('#stopSong').fadeIn(800);
                 });
+
+                $('.parallax-content').addClass('show');
             });
             $('.stopIt').click('click', function(){
                 stopPerformance();
                 $('#stopSong').fadeOut(500, function(){
                     $('#startSong').fadeIn(800);
                 });
+                $('.parallax-content').removeClass('show');
+                $('.parallax-content .score').html('');
             });
 
         });
