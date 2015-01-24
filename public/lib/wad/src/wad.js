@@ -410,7 +410,7 @@ with special handling for reverb (ConvolverNode). **/
             that.panning.node = context.createPanner();
             // var panning = (arg && arg.panning) ? arg.panning : that.panning.location
             if ( arg && arg.panning ) {
-                console.log('arg!', arg.panning)
+                //console.log('arg!', arg.panning)
                 if ( typeof(arg.panning) === 'number' ) {
                     var panning = [ arg.panning, 0, 0 ];
                 }

@@ -57,12 +57,10 @@ $toneMap = array(
 );
 
 //1. Instruments
-$instruments = array();
-//parse the block data to determine a drum track?
-$instruments[4] = array();
-//...
+$totalInstruments = 4;
+$addDrums = false;
 
-//take chunks of 4 transactions, to create 4 instruments for melody
+//take chunks of x transactions, to create x instruments for melody
 //max of 125 notes
 foreach ($data['transactions'] as $key => $tx) {
     //parse the transaction to create performance data
@@ -77,26 +75,36 @@ foreach ($data['transactions'] as $key => $tx) {
     //or...use second part of hash to determin the length
     $length = hexdec(substr($tx['hash'], 1, 1));
 
+    //3. panning - controlled by ratio of inputs to outputs
+    $inputs = count($tx['inputs']);
+    $outputs = count($tx['outputs']);
+    //$pan = 
+
     $performance = array(
-        'note' => $note.$pitch,
-        'value' => $tx['estimated_value'],
+        'note'   => $note.$pitch,
+        'value'  => $tx['estimated_value'],
         'length' => $length,
+        'pan'    => [0, 1, 10],
     );
 
     //add the performance data to the relevant instrument
-    $instrumentIndex = ($key+1) % 4;
+    $instrumentIndex = ($key+1) % $totalInstruments;
     $instruments[$instrumentIndex][] = $performance;
 }
 
 //parse the block data to determine a drum track?
-$length = count($instruments[0]);
-for ($length; $length>0; $length--) {
-    $performance = array(
-        'note' => 'A1',
-        'value' => 0,
-        'length' => 8,
-    );
-    $instruments[4][] = $performance;
+if ($addDrums) {
+    $drumInstrument = count($instruments);
+    $length = count($instruments[0]);
+    for ($length; $length>0; $length--) {
+        $performance = array(
+            'note'   => 'A1',
+            'value'  => 0,
+            'length' => 8,
+            'pan'    => 0,
+        );
+        $instruments[$drumInstrument][] = $performance;
+    }
 }
 
 
@@ -125,10 +133,16 @@ for ($i=0; $i<$totalInstructions; $i++) {
     }
 }
 
-echo json_encode($blockchainScore);
-exit;
+$response = array(
+    'score' => $blockchainScore,
+    'transactions' => $data['transactions'],
+    'blockHash' => $data['block']['hash'],
+    'blockHeight' => $data['block']['height'],
+    'totalTransactions' => count($data['transactions']),
 
-echo json_encode($data);
+);
+echo json_encode($response);
+exit;
 
 
 
