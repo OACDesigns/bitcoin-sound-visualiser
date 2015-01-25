@@ -47,17 +47,17 @@ $addDrums = false;
 //max of 125 notes
 foreach ($data['transactions'] as $key => $tx) {
     //parse the transaction to create performance data
-    //1. note (one and pitch)
+    //1. note (tone and pitch, obtained from first and second part of hash)
     $tone = hexdec(substr($tx['hash'], 0, 1));
     $note = $toneMap[$scale][$tone];
-    $pitch = 4;
+    $pitch = hexdec(substr($tx['hash'], 1, 1));
 
     //2. length (convert value to semiquavers)
     $length = floor($tx['estimated_value']/6250000);
     //compress length into range of 1 semiquaver to 1 semibreve
     //or...use time between txs for note length
-    //or...use second part of hash to determin the length
-    $length = hexdec(substr($tx['hash'], 1, 1));
+    //or...use third part of hash to determin the length
+    $length = hexdec(substr($tx['hash'], 2, 1));
 
     //3. panning - controlled by ratio of inputs to outputs
     $inputs = count($tx['inputs']);
