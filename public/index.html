@@ -30,8 +30,11 @@
         var currentRow = 0;
 
         function getData(block) {
-            //get the performance data for a specified block
-            console.log('get block'+block);
+            $('.song-details').html("<h3>Loading...</h3>");
+            //clear old score
+            $('.parallax-content .score').html('');
+
+            console.log('get block '+block);
             $.ajax({
               url: "getData.php",
               data: {block: block},
@@ -55,6 +58,10 @@
               },
               error: function(xhr){
                 console.log('error', xhr.responseText);
+                $('.song-details').html("<h3>An Error Occurred...</h3><p>Please try again.</p>");
+                $('#stopSong').fadeOut(500, function(){
+                    $('#startSong').fadeIn(500);
+                });
               },
               dataType: 'json'
             });
