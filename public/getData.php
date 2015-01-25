@@ -31,11 +31,11 @@ $toneMap = array(
     //Hexatonic - six note blues
     ['C','D','D#','E','G','A','C','D','D#','E','G','A','C','D','D#','E'],
     //Heptatonic - seven note blues
-    ['C','Eb','F','F#','G','Bb','C','Eb','F','F#','G','Bb','C', 'Eb', 'F'],
+    ['C','Eb','F','F#','G','Bb','C','Eb','F','F#','G','Bb','C','Eb','F', 'F#'],
     //full tone scale - more pleasant on the ears
     ['C','C','D','E','E','F','F','G','G','A','B','B','C','D','E','F']
  );
-$scaleNames = array('Chromatic', 'Hexatonic', 'Heptatonic', 'Whole Tone');
+$scaleNames = array('Chromatic', 'Pentatonic Major', 'Hexatonic', 'Heptatonic', 'Whole Tone');
 //decide the tonemap to use based on the block height (or maybe difficulty?)
 $scale = $data['block']['height'] % count($toneMap);
 
