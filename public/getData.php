@@ -23,44 +23,21 @@ if ($block == "latest") {
 $data['transactions'] = $client->blockTransactions($data['block']['height'], $page=1, $limit=500)['data'];
 
 //map of semitones for a hexadec tone conversion (needs 16 tones)
-//Chromatic scale
 $toneMap = array(
-    'C',
-    'C#',
-    'D',
-    'Eb',
-    'E',
-    'F',
-    'F#',
-    'G',
-    'G#',
-    'A',
-    'Bb',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-);
-//full tone scale - more pleasant on the ears
-$toneMap = array(
-    'C',
-    'C',
-    'D',
-    'E',
-    'E',
-    'F',
-    'F',
-    'G',
-    'G',
-    'A',
-    'B',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-);
+    //Chromatic scale
+    ['C','C#','D','Eb','E','F','F#','G','G#','A','Bb','B','C','D','E','F'],
+    //pentatonic major
+    ['C','E','F','G','B','C','E','F','G','B','C','E','F','G','B','C'],
+    //Hexatonic - six note blues
+    ['C','D','D#','E','G','A','C','D','D#','E','G','A','C','D','D#','E'],
+    //Heptatonic - seven note blues
+    ['C','Eb','F','F#','G','Bb','C','Eb','F','F#','G','Bb','C', 'Eb', 'F'],
+    //full tone scale - more pleasant on the ears
+    ['C','C','D','E','E','F','F','G','G','A','B','B','C','D','E','F']
+ );
+$scaleNames = array('Chromatic', 'Hexatonic', 'Heptatonic', 'Whole Tone');
+//decide the tonemap to use based on the block height (or maybe difficulty?)
+$scale = $data['block']['height'] % count($toneMap);
 
 //1. Instruments
 $totalInstruments = 4;
@@ -72,12 +49,13 @@ foreach ($data['transactions'] as $key => $tx) {
     //parse the transaction to create performance data
     //1. note (one and pitch)
     $tone = hexdec(substr($tx['hash'], 0, 1));
-    $note = $toneMap[$tone];
+    $note = $toneMap[$scale][$tone];
     $pitch = 4;
 
     //2. length (convert value to semiquavers)
     $length = floor($tx['estimated_value']/6250000);
-    //compress length into range of 1 semiquaver to 1 semibreve ()
+    //compress length into range of 1 semiquaver to 1 semibreve
+    //or...use time between txs for note length
     //or...use second part of hash to determin the length
     $length = hexdec(substr($tx['hash'], 1, 1));
 
@@ -113,10 +91,6 @@ if ($addDrums) {
     }
 }
 
-
-//echo json_encode($instruments);
-//exit;
-
 //an array of instruction, each index being an incremented semi-quaver
 $blockchainScore = array();
 
@@ -141,6 +115,7 @@ for ($i=0; $i<$totalInstructions; $i++) {
 
 $response = array(
     'score' => $blockchainScore,
+    'scale' => $scaleNames[$scale],
     'transactions' => $data['transactions'],
     'blockHash' => $data['block']['hash'],
     'blockHeight' => $data['block']['height'],
