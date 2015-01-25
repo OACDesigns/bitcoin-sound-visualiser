@@ -42,7 +42,7 @@
                 //name of this song
                 var detailsHTML = "<h3>Bitcoin Symphony No."+result.blockHeight+"</h3>"
                             + "<p>A composition from block "+result.blockHash+"</br>"
-                            + "In 4/4 time, at "+bpm+"bpm</p>";
+                            + "In 4/4 time with the "+result.scale+" scale at "+bpm+"bpm</p>";
                 $('.song-details').html(detailsHTML);
                 //clear old score
                 $('.parallax-content .score').html('');
@@ -388,7 +388,7 @@
         $(document).ready(function(){
             $('#stopSong').fadeOut(0);
 
-            $('.letsGo').click('click', function(){
+            $('#startSong').submit(function(){
                 //get the block height
                 var blockHeight = parseInt($('#blockHeight').val());
                 if(isNaN(blockHeight)) {
@@ -428,7 +428,7 @@
             <h3 class="bar"></h3>
             <p><i class="fi-arrow-down"></i></p>
         </div>
-        <div id="startSong">
+        <form id="startSong">
             <div class="row">
                 <div class="large-6 small-centered columns">
                     <div class="row collapse">
@@ -441,7 +441,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
         <div id="stopSong" class="text-center">
             <a href="#" class="button alert small stopIt">Please Stop!!!</a>
         </div>
