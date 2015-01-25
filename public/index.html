@@ -36,8 +36,7 @@
               url: "getData.php",
               data: {block: block},
               success: function(result){
-                //create the score from the data
-                //for each instrument read the notes
+                //get the score from the data
                 score = result.score;
 
                 //name of this song
@@ -45,14 +44,17 @@
                             + "<p>A composition from block "+result.blockHash+"</br>"
                             + "In 4/4 time, at "+bpm+"bpm</p>";
                 $('.song-details').html(detailsHTML);
+                //clear old score
+                $('.parallax-content .score').html('');
 
                 //initialise the visualisations
                 initViz(parseInt(result.totalTransactions));
+
                 //start the performance
                 performer();
               },
-              error: function(){
-                console.log('error');
+              error: function(xhr){
+                console.log('error', xhr.responseText);
               },
               dataType: 'json'
             });
@@ -201,7 +203,7 @@
                 stopPerformance();
 
                 $('#stopSong').fadeOut(500, function(){
-                    $('#startSong').fadeIn(800);
+                    $('#startSong').fadeIn(500);
                 });
 
                 $('.bar').html('<span class="fin">Fini</span>');
@@ -218,7 +220,7 @@
 
 
             //Instrument 1
-            //do we need to play, or stop?
+            //do we need to play in this increment?
             if (score[position][0]) {
                 playing[0] = score[position][0]['note'];
                 bgColor[0] = playing[0].substring(0,1);
@@ -248,7 +250,7 @@
             }
 
             //Instrument 2
-            //do we need to play, or stop?
+            //do we need to play in this increment?
             if (score[position][1]) {
                 playing[1] = score[position][1]['note'];
                 bgColor[1] = playing[1].substring(1,2);
@@ -278,7 +280,7 @@
             }
 
             //Instrument 3
-            //do we need to play, or stop?
+            //do we need to play in this increment?
             if (score[position][2]) {
                 playing[2] = score[position][2]['note'];
                 bgColor[2] = playing[2].substring(0,1);
@@ -308,7 +310,7 @@
             }
 
             //Instrument 4
-            //do we need to play, or stop?
+            //do we need to play in this increment?
             if (score[position][3]) {
                 playing[3] = score[position][3]['note'];
                 bgColor[3] = playing[3].substring(1,2);
@@ -338,7 +340,7 @@
             }
 
             //Instrument 5
-            //do we need to play, or stop?
+            //do we need to play in this increment?
             if (score[position][4]) {
                 playing[4] = score[position][4]['note'];
                 bgColor[4] = playing[4].substring(0,1);
@@ -390,7 +392,7 @@
                 //get the block height
                 var blockHeight = parseInt($('#blockHeight').val());
                 if(isNaN(blockHeight)) {
-                    blockHeight = 340339;
+                    blockHeight = 'latest';
                 }
                 //init the performer
                 initPerformance();
@@ -398,7 +400,7 @@
                 getData(blockHeight);
 
                 $('#startSong').fadeOut(500, function(){
-                    $('#stopSong').fadeIn(800);
+                    $('#stopSong').fadeIn(500);
                 });
 
                 $('.parallax-content').addClass('show');
@@ -406,7 +408,7 @@
             $('.stopIt').click('click', function(){
                 stopPerformance();
                 $('#stopSong').fadeOut(500, function(){
-                    $('#startSong').fadeIn(800);
+                    $('#startSong').fadeIn(500);
                 });
                 $('.parallax-content').removeClass('show');
                 $('.parallax-content .score').html('');

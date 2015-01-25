@@ -15,10 +15,15 @@ $client->setCurlDefaultOption('verify', false);
 
 //get the data
 $block = $_GET['block'];
-$data['block'] = $client->block($block);
-$data['transactions'] = $client->blockTransactions($block, $page=1, $limit=500)['data'];
+if ($block == "latest") {
+    $data['block'] = $client->blockLatest();
+} else {
+    $data['block'] = $client->block($block);
+}
+$data['transactions'] = $client->blockTransactions($data['block']['height'], $page=1, $limit=500)['data'];
 
 //map of semitones for a hexadec tone conversion (needs 16 tones)
+//Chromatic scale
 $toneMap = array(
     'C',
     'C#',
@@ -37,6 +42,7 @@ $toneMap = array(
     'E',
     'F',
 );
+//full tone scale - more pleasant on the ears
 $toneMap = array(
     'C',
     'C',
