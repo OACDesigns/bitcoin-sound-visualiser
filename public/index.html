@@ -395,7 +395,8 @@
         $(document).ready(function(){
             $('#stopSong').fadeOut(0);
 
-            $('#startSong').submit(function(){
+            $('#startSong').submit(function(event){
+                event.preventDefault();
                 //get the block height
                 var blockHeight = parseInt($('#blockHeight').val());
                 if(isNaN(blockHeight)) {
