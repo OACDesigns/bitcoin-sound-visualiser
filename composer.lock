@@ -125,7 +125,6 @@
                 "shasum": ""
             },
             "require": {
-                "ext-gmp": "*",
                 "ext-mcrypt": "*",
                 "mdanter/ecc": "0.2.0",
                 "php": ">=5.3.3"
@@ -190,7 +189,6 @@
                 "99designs/http-signatures-guzzlehttp": "1.0.0",
                 "blocktrail/bitcoin-lib": "1.0.6",
                 "ext-bcmath": "*",
-                "ext-gmp": "*",
                 "ext-intl": "*",
                 "ext-mcrypt": "*",
                 "guzzlehttp/guzzle": "4.2.*",
