@@ -3,6 +3,8 @@
 include('../vendor/autoload.php');
 use Blocktrail\SDK\BlocktrailSDK;
 
+//enable CORS for heroku app and gh-pages...you might want to disable this when deploying on your own server
+header('Access-Control-Allow-Origin: *');  
 
 $apiKey = "76fbd6319b171d12ab8a87c739e1ee16a9e4ba3a";
 $apiSecret = "70e1654ce7bc6301c3c33108eee1b42a7f698aa2";
