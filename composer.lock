@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "53e8aa279fe621708f6b6d9907ac02b1",
+    "hash": "425714d2d6ba0532284cfe5dc87ebb11",
     "packages": [
         {
             "name": "99designs/http-signatures",
