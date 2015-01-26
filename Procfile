@@ -1,1 +1,1 @@
-web: public/ web/
+web: public web/
