@@ -1,6 +1,7 @@
 # Bitcoin Sound Visualiser
-Sound of the block chain - an audio-visual representation of Bitcoin data
+Sound of the block chain - an audio-visual representation of Bitcoin data.
 
+[See the live demo](http://oacdesigns.github.io/bitcoin-sound-visualiser/)
 
 ###How to run it
 run `composer update` to download the required packages and then simply navigate to the `public` folder and start a simple server with `php -S localhost:80`. You can now access the app in your browser at [http://localhost](http://localhost).
