@@ -52,7 +52,7 @@ foreach ($data['transactions'] as $key => $tx) {
     //1. note (tone and pitch, obtained from first and second part of hash)
     $tone = hexdec(substr($tx['hash'], 0, 1));
     $note = $toneMap[$scale][$tone];
-    $pitch = hexdec(substr($tx['hash'], 1, 1));
+    $pitch = floor(hexdec(substr($tx['hash'], 1, 1))/2.2); // divide by 2.2 to reduce range from 0-16 to 0-7
 
     //2. length (convert value to semiquavers)
     $length = floor($tx['estimated_value']/6250000);
